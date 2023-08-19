@@ -63,7 +63,7 @@ Resources:
       Source:
         Auth:
           Type: OAUTH
-        BuildSpec: buildspec/lambda_layer.yml
+        BuildSpec: buildspec/layer.yml
         Location: !Ref GitRepository
         Type: GITHUB
         GitCloneDepth: 1
