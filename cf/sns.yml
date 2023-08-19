@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create the SNS Topic.
+
+Parameters:
+  SNSDisplayName:
+    Description: SNS Topic Name.
+    Type: String
+    Default: ad-processor
+
+  SubscriptionEmail:
+    Description: User Email for SNS Topic.
+    Type: String
+
+Resources:
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: !Ref SNSDisplayName
+      Subscription:
+        - Endpoint: !Ref SubscriptionEmail
+          Protocol: email
+      TopicName: !Ref SNSDisplayName
+      KmsMasterKeyId: aws/sns

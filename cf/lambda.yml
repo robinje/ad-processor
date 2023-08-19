@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create the Lambda Functions
+
+Parameters:
+  Layer:
+    Description: ARN for the Lambda Layer
+    Type: String
+
+  LoggingLevel:
+    Description: Minimum level for logging events
+    Type: String
+    Default: "30"
+
+  S3BucketPrivate:
+    Description: Location for Private Artifacts
+    Type: String
+    Default: dev-private
+
+  TimeStreamDatabase:
+    Description: Timestream Database
+    Type: String
+    Default: ad-processor
+
+  TimestreamLoginTable:
+    Description: Login Table
+    Type: String
+    Default: login
+
+  Subnets:
+    Description: Subnets for the Lambda
+    Type: List<AWS::EC2::Subnet::Id>
+
+  LambdaSecurityGroup:
+    Description: Security Group for the Lambda
+    Type: AWS::EC2::SecurityGroup::Id
+
+  SNSTopic:
+    Description: SNS Topic for the Lambda
+    Type: String
+
+Resources:
+  AdCollectorLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      TracingConfig:
+        Mode: Active
+      Code:
+        S3Bucket: !Ref S3BucketPrivate
+        S3Key: /Lambda/ad_collector.zip
+      Description: Collects the AD Data
+      Environment:
+        Variables:
+          DATABASE_NAME: !Ref TimeStreamDatabase
+          TABLE_NAME: !Ref TimestreamLoginTable
+          SNS_TOPIC: !Ref SNSTopic
+          LOGGING: !Ref LoggingLevel
+      FunctionName: ad-collector
+      Handler: lambda/ad_collector.lambda_handler
+      Layers:
+        - !Ref Layer
+      MemorySize: 128
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LambdaRole
+      Runtime: python3.10
+      Timeout: 120
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds: !Ref Subnets
+
+  AdProcessorLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      TracingConfig:
+        Mode: Active
+      Code:
+        S3Bucket: !Ref S3BucketPrivate
+        S3Key: /Lambda/ad_processor.zip
+      Description: Collects the AD Data
+      Environment:
+        Variables:
+          DATABASE_NAME: !Ref TimeStreamDatabase
+          TABLE_NAME: !Ref TimestreamLoginTable
+          SNS_TOPIC: !Ref SNSTopic
+          LOGGING: !Ref LoggingLevel
+      FunctionName: ad-processor
+      Handler: lambda/ad_processor.lambda_handler
+      Layers:
+        - !Ref Layer
+      MemorySize: 128
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LambdaRole
+      Runtime: python3.10
+      Timeout: 120
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds: !Ref Subnets

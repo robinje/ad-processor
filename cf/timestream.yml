@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create the Timestream database.
+
+Parameters:
+  TimeStreamDatabase:
+    Description: Timestream Database
+    Type: String
+    Default: ad-processor
+
+  TimestreamLoginTable:
+    Description: Login Table
+    Type: String
+    Default: login
+
+Resources:
+  Database:
+    Type: AWS::Timestream::Database
+    Properties:
+      DatabaseName: !Ref TimeStreamDatabase
+
+  LoginTable:
+    Type: AWS::Timestream::Table
+    DependsOn: Database
+    Properties:
+      TableName: !Ref TimestreamLoginTable
+      DatabaseName: !Ref TimeStreamDatabase
+      RetentionProperties:
+        MemoryStoreRetentionPeriodInHours: 24
+        MagneticStoreRetentionPeriodInDays: 762
+
+  ObservatoryTimestreamWritePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: ObservatoryTimestreamWritePolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - timestream:DescribeEndpoints
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - timestream:DescribeDatabase
+              - timestream:ListMeasures
+              - timestream:WriteRecords
+              - timestream:ListTables
+              - timestream:CancelQuery
+              - timestream:ListDatabases
+              - timestream:DescribeTable
+              - timestream:UpdateTable
+            Resource:
+              - !GetAtt LoginTable.Arn
+
+      Roles:
+        - LambdaRole
