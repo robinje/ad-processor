@@ -1,6 +1,6 @@
 import msal
 
-from components.environment import CLIENT_ID, CLIENT_SECRET, RESOURCE, API_VERSION, TOKEN_URL, TENANT_ID
+from components.environment import CLIENT_ID, CLIENT_SECRET, TENANT_ID
 
 
 def azure_token():

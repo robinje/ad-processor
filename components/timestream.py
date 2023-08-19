@@ -131,7 +131,6 @@ def timestream_record(dimensions: dict, measure_name: str, measure_value, measur
     return record
 
 
-@xray_recorder.capture("Timestream")  # type: ignore
 def timeseries_add_item(table, records: list):
     """Add a point or points in the table"""
 
@@ -149,7 +148,6 @@ def timeseries_add_item(table, records: list):
         logger.exception(f"DB Interface: Timeseries {err}", stack_info=True)
 
 
-@xray_recorder.capture("Timestream")  # type: ignore
 def timeseries_add_batch(table, records: list, common_attributes=None) -> None:
     """
     Writes a batch of records to a timeseries database table.
@@ -211,7 +209,6 @@ def timeseries_add_batch(table, records: list, common_attributes=None) -> None:
             Time_Series_Writer.write_records(write_args, table)
 
 
-@xray_recorder.capture("Timestream")  # type: ignore
 def timeseries_query(query: str, token=None) -> list:
     logger.debug(f"DB Interface: Timeseries Single Page Query: Query: {query}")
 
@@ -244,7 +241,6 @@ def timeseries_query(query: str, token=None) -> list:
         raise Exception from err
 
 
-@xray_recorder.capture("Timestream")  # type: ignore
 def timeseries_long_query(
     query: str,
     next_token=None,
