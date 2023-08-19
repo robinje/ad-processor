@@ -1,4 +1,4 @@
-requests
-pandas
-pyarrow
-boto3
+requests==2.31.0
+pandas==2.0.3
+pyarrow==12.0.1
+boto3==1.28.30

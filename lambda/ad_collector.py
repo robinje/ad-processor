@@ -1,4 +1,4 @@
-import requests
+import requests # type: ignore
 import pandas as pd
 from datetime import datetime, timedelta
 import boto3
