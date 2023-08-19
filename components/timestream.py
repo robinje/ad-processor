@@ -8,6 +8,7 @@ from botocore.exceptions import ParamValidationError
 from components.environment import DATABASE_NAME, REGION, TS_PAGE_SIZE
 from components.logging import logger
 
+
 class TimeStreamWriter:
     def __init__(self):
         self.status = None
@@ -35,7 +36,6 @@ class TimeStreamWriter:
             logger.error(f"Timestream Handler: Paramater Validation Error: {write_args}: {err}")
         except Exception as err:
             logger.exception(f"Timestream Handler: Write Records: Unknown Error: {err}", stack_info=True)
-
 
     def drop(self, table):
         """Drop the selected table"""
@@ -79,10 +79,12 @@ class TimeStreamReader:
                     logger.warning(f"Timestream Handler: {datum} has no key!")
             row_results.append(row_output)
         return row_results
-    
+
+
 Time_Series_Writer = TimeStreamWriter()
 Time_Series_Reader = TimeStreamReader()
-    
+
+
 def generate_client_token():
     token = "".join(random.choices(string.ascii_lowercase + string.digits, k=32))
 

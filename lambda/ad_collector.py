@@ -1,20 +1,13 @@
-import requests # type: ignore
-import pandas as pd
 from datetime import datetime, timedelta
-import boto3
 
-# Constants
-CLIENT_ID = "your_client_id"
-TENANT_ID = "your_tenant_id"
-CLIENT_SECRET = "your_client_secret"
-RESOURCE = "https://graph.microsoft.com"
-API_VERSION = "v1.0"
-TIMESTREAM_DATABASE_NAME = "your_timestream_database_name"
-TIMESTREAM_TABLE_NAME = "your_timestream_table_name"
-SNS_TOPIC_ARN = "your_sns_topic_arn"
+import boto3
+import pandas as pd
+import requests  # type: ignore
+
+from components.environment import DATABASE_NAME, TABLE_NAME, CLIENT_ID, CLIENT_SECRET, RESOURCE, API_VERSION, TOKEN_URL
+
 
 # Endpoints (Updated to sign-in logs)
-TOKEN_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/token"
 
 
 def lambda_handler(event, context):
@@ -29,8 +22,6 @@ def lambda_handler(event, context):
         "resource": RESOURCE,
         "client_secret": CLIENT_SECRET,
         "scope": "https://graph.microsoft.com/.default",
-        "username": "username@example.com",
-        "password": "password",
     }
 
     token_r = requests.post(TOKEN_URL, data=token_data)
@@ -61,22 +52,15 @@ def lambda_handler(event, context):
                 ],
                 "MeasureName": "status_errorCode",  # Example measure
                 "MeasureValue": str(row["status.errorCode"]),  # Example measure value
-                "MeasureValueType": "BIGINT"  # Type should match the measure value
+                "MeasureValueType": "BIGINT",  # Type should match the measure value
             }
             records.append(record)
 
-        timestream_client = boto3.client('timestream-write')
-        timestream_client.write_records(
-            DatabaseName=TIMESTREAM_DATABASE_NAME,
-            TableName=TIMESTREAM_TABLE_NAME,
-            Records=records
-        )
+        timestream_client = boto3.client("timestream-write")
+        timestream_client.write_records(DatabaseName=DATABASE_NAME, TableName=TABLE_NAME, Records=records)
 
-        # Publish the success message to SNS
-        sns_client = boto3.client("sns")
-        message = f"Sign-in logs have been written to Timestream: {TIMESTREAM_DATABASE_NAME}/{TIMESTREAM_TABLE_NAME}"
-        sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message)
-
+        # Publish the success message
+        message = f"Sign-in logs have been written to Timestream: {DATABASE_NAME}/{TABLE_NAME}"
         return {"statusCode": 200, "body": message}
     else:
         error_message = f"Error fetching logs: {response.status_code}, {response.text}"
