@@ -23,3 +23,5 @@ RESOURCE = "https://graph.microsoft.com"
 API_VERSION = "v1.0"
 
 TOKEN_URL = f"https://login.microsoftonline.com/{TENANT_ID}/oauth2/token"
+
+SNS_TOPIC = os.environ.get("SNS_TOPIC", "arn:aws:sns:us-east-1:123456789012:ad-processor")
