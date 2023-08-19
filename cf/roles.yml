@@ -1,0 +1,102 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Needed Roles
+
+Parameters:
+  RolesS3BucketPrivate:
+    Description: Location for Private Artifacts
+    Type: String
+
+Resources:
+
+# Roles
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CodeBuildRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: /service-role/
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: LambdaRole
+      Description: Role for Lambdas
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+
+# Policies
+
+  # Policies
+
+  ParamaterPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: ParamaterPolicy
+      Description: Allows Access to the Proper Paramaters
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+            - ssm:DescribeParameters
+            Effect: Allow
+            Resource: "*"
+          - Action:
+            - ssm:GetParameters
+            Effect: Allow
+            Resource:
+             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientID
+             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientSecret
+             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TenantID
+      Roles:
+        - !Ref LambdaRole
+
+  CodeBuildPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Code Build Policy
+      ManagedPolicyName: CodeBuildPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:*
+              - ssm:*
+              - ec2:*
+              - codebuild:CreateReportGroup
+              - codebuild:CreateReport
+              - codebuild:UpdateReport
+              - codebuild:BatchPutTestCases
+              - codebuild:BatchPutCodeCoverages
+              - iam:GetInstanceProfile
+              - iam:PassRole
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              - iam:ListServerCertificates
+              - secretsmanager:*
+            Resource:
+              - "*"
+      Roles:
+        - !Ref CodeBuildRole
+

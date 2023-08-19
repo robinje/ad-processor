@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: "3.10"
+
+  build:
+    commands:
+      # run dynamic lambda folder build loop
+      - chmod +x ./buildspec/lambda_build.sh
+      - ./buildspec/lambda_build.sh
+
+artifacts:
+  files:
+    - "**/*.zip"
+  discard-paths: yes
+

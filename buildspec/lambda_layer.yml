@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: "3.10"
+    commands:
+      - apt-get update -y
+      - apt-get install zip wget python3-pip -y -q
+
+  build:
+    commands:
+      - mkdir python
+      - pip3 install -r buildspecs/requirements.txt -t ./python --compile --no-cache-dir
+      - chmod -R 755 ./python
+      - zip -qr9 ad-processor.zip ./python
+
+artifacts:
+  files:
+    - "**/*.zip"
+  discard-paths: yes

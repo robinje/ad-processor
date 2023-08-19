@@ -32,17 +32,19 @@ def lambda_handler(event, context):
         records = []
 
         for _, row in logs_df.iterrows():
-            records.append(timestream_record(
-                {
-                    "username": row["userPrincipalName"],
-                    "ip_address": row["ipAddress"],
-                    "location": row["location"],
-                },
-                "success",
-                row["status"] == "Success",
-                "BOOLEAN",
-                int((round(datetime.strptime(row['Date'], "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000)))
-            ))
+            records.append(
+                timestream_record(
+                    {
+                        "username": row["userPrincipalName"],
+                        "ip_address": row["ipAddress"],
+                        "location": row["location"],
+                    },
+                    "success",
+                    row["status"] == "Success",
+                    "BOOLEAN",
+                    int((round(datetime.strptime(row["Date"], "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000))),
+                )
+            )
 
         timeseries_add_batch(TABLE_NAME, records)
 
