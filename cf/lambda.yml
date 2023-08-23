@@ -38,6 +38,7 @@ Parameters:
   SNSTopic:
     Description: SNS Topic for the Lambda
     Type: String
+    Default: ad-processor
 
 Resources:
   AdCollectorLambda:
@@ -47,7 +48,7 @@ Resources:
         Mode: Active
       Code:
         S3Bucket: !Ref S3BucketPrivate
-        S3Key: /Lambda/ad_collector.zip
+        S3Key: Lambda/ad_collector.zip
       Description: Collects the AD Data
       Environment:
         Variables:
@@ -75,7 +76,7 @@ Resources:
         Mode: Active
       Code:
         S3Bucket: !Ref S3BucketPrivate
-        S3Key: /Lambda/ad_processor.zip
+        S3Key: Lambda/ad_processor.zip
       Description: Collects the AD Data
       Environment:
         Variables:

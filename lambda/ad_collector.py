@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta
 
-import pandas as pd
-import requests  # type: ignore
+import requests # type: ignore
 
 from components.azure import azure_token
 from components.environment import DATABASE_NAME, TABLE_NAME, RESOURCE, API_VERSION
 from components.geohash import encode
 from components.timestream import timestream_record, timeseries_add_batch
-
 
 def lambda_handler(event, context):
     # Time filter for last 30 minutes
@@ -30,25 +28,27 @@ def lambda_handler(event, context):
     response = requests.get(sign_in_log_url, headers=headers)
 
     if response.status_code == 200:
-        logs = response.json()
-        logs_df = pd.json_normalize(logs["value"])
+        logs = response.json()["value"]
 
         # Write to Timestream
         records = []
 
-        for _, row in logs_df.iterrows():
+        for log in logs:
+            created_datetime = datetime.strptime(log["createdDateTime"], "%Y-%m-%dT%H:%M:%SZ")
+            timestamp_ms = int(round(created_datetime.timestamp() * 1000))
+            
             records.append(
                 timestream_record(
                     {
-                        "username": row["userPrincipalName"],
-                        "ip_address": row["ipAddress"],
-                        "location": f'{row["location.city"]}, {row["location.state"]}, {row["location.countryOrRegion"]}',
-                        "geohash": encode(row["location.geoCoordinates.latitude"], row["location.geoCoordinates.longitude"]),
+                        "username": log["userPrincipalName"],
+                        "ip_address": log["ipAddress"],
+                        "location": f'{log["location"]["city"]}, {log["location"]["state"]}, {log["location"]["countryOrRegion"]}',
+                        "geohash": encode(log["location"]["geoCoordinates"]["latitude"], log["location"]["geoCoordinates"]["longitude"]),
                     },
                     "success",
-                    int(row["status.errorCode"]) == 0,
+                    int(log["status"]["errorCode"]) == 0,
                     "BOOLEAN",
-                    int((round(datetime.strptime(row["createdDateTime"], "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000))),
+                    timestamp_ms,
                 )
             )
 

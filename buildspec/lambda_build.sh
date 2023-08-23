@@ -19,3 +19,5 @@ do
     zip -qr9 $dir.zip $lambda
   fi
 done
+
+rm function.zip

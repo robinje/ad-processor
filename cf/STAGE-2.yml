@@ -6,3 +6,46 @@ Parameters:
   S3BucketPrivate:
     Description: Location for Private Artifacts
     Type: String
+
+  TemplateLayer:
+    Description: Path to Layer Template
+    Type: String
+    Default: layer.yml
+
+  TemplateLambda:
+    Description: Path to Lambda Template
+    Type: String
+    Default: lambda.yml
+
+  Subnets:
+    Description: Subnets for the Lambda
+    Type: List<AWS::EC2::Subnet::Id>
+
+  LambdaSecurityGroup:
+    Description: Security Group for the Lambda
+    Type: AWS::EC2::SecurityGroup::Id
+
+  SNSTopic:
+    Description: SNS Topic for the Lambda
+    Type: String
+    Default: ad-processor
+
+
+Resources:
+  ChildStackLayer:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateLayer}
+      Parameters:
+        S3BucketPrivate: !Ref S3BucketPrivate
+
+  ChildStackLambda:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateLambda}
+      Parameters:
+        S3BucketPrivate: !Ref S3BucketPrivate
+        Layer: !GetAtt ChildStackLayer.Outputs.LayerArn
+        SNSTopic: !Ref SNSTopic
+        Subnets: !Ref Subnets
+        LambdaSecurityGroup: !Ref LambdaSecurityGroup
