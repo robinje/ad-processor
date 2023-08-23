@@ -11,7 +11,7 @@ phases:
   build:
     commands:
       - mkdir python
-      - pip3 install -r buildspecs/requirements.txt -t ./python --compile --no-cache-dir
+      - pip3 install -r requirements/requirements.txt -t ./python --compile --no-cache-dir
       - chmod -R 755 ./python
       - zip -qr9 ad-processor.zip ./python
 
