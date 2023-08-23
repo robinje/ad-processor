@@ -43,14 +43,7 @@ Resources:
               - "*"
           - Effect: Allow
             Action:
-              - timestream:DescribeDatabase
-              - timestream:ListMeasures
-              - timestream:WriteRecords
-              - timestream:ListTables
-              - timestream:CancelQuery
-              - timestream:ListDatabases
-              - timestream:DescribeTable
-              - timestream:UpdateTable
+              - timestream:*
             Resource:
               - !GetAtt LoginTable.Arn
 

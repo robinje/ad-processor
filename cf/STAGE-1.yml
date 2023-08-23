@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Template for Deploying the First Stage.
+
+Parameters:
+  S3BucketPrivate:
+    Description: Location for Private Artifacts
+    Type: String
+
+  TemplateRoles:
+    Description: Path to Roles Template
+    Type: String
+    Default: roles.yml
+
+  TemplateCodeBuild:
+    Description: Path to CodeBuild Template
+    Type: String
+    Default: codebuild.yml
+
+  TemplateSNS:
+    Description: Path to SNS Template
+    Type: String
+    Default: sns.yml
+
+  TemplateTimestream:
+    Description: Path to Timestream Template
+    Type: String
+    Default: timestream.yml
+
+  TimeStreamDatabase:
+    Description: Timestream Database
+    Type: String
+    Default: ad-processor
+
+  TimestreamLoginTable:
+    Description: Login Table
+    Type: String
+    Default: login
+
+
+  GitRepository:
+    Description: Git Repository.
+    Type: String
+    Default: robinje/ad-processor
+
+  GitHubBranch:
+    Description: Repo Branch.
+    Type: String
+    Default: develop
+
+  SubscriptionEmail:
+    Description: User Email for SNS Topic.
+    Type: String
+
+Resources:
+  ChildStackRoles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateRoles}
+      Parameters:
+        RolesS3BucketPrivate: !Ref S3BucketPrivate
+
+  ChildStackCodeBuild:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ChildStackRoles
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateCodeBuild}
+      Parameters:
+        RolesS3BucketPrivate: !Ref S3BucketPrivate
+        GitRepository: !Ref GitRepository
+        GitHubBranch: !Ref GitHubBranch
+
+  ChildStackTimestream:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ChildStackRoles
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateTimestream}
+      Parameters:
+        TimeStreamDatabase: !Ref TimeStreamDatabase
+        TimestreamLoginTable: !Ref TimestreamLoginTable
+
+  ChildStackSNS:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ChildStackCodeBuild
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateSNS}
+      Parameters:
+        SNSDisplayName: ad-processor
+        SubscriptionEmail: !Ref SubscriptionEmail
+
+
+

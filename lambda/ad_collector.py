@@ -5,24 +5,29 @@ import requests  # type: ignore
 
 from components.azure import azure_token
 from components.environment import DATABASE_NAME, TABLE_NAME, RESOURCE, API_VERSION
+from components.geohash import encode
 from components.timestream import timestream_record, timeseries_add_batch
 
 
 def lambda_handler(event, context):
     # Time filter for last 30 minutes
     time_filter = (datetime.utcnow() - timedelta(minutes=30)).isoformat() + "Z"
-    SIGN_IN_LOG_URL: str = f"https://{RESOURCE}/{API_VERSION}/auditLogs/signIns?$filter=createdDateTime ge {time_filter}"
+
+    # Include parentheses around the filter expression
+    audit_filter = f"?$filter=(createdDateTime ge {time_filter})"
+
+    sign_in_log_url: str = f"https://{RESOURCE}/{API_VERSION}/auditLogs/signIns{audit_filter}"
 
     # Get Token
     token = azure_token()
 
     # Fetch Azure AD Sign-in Logs
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": token,
         "Content-Type": "application/json",
     }
 
-    response = requests.get(SIGN_IN_LOG_URL, headers=headers)
+    response = requests.get(sign_in_log_url, headers=headers)
 
     if response.status_code == 200:
         logs = response.json()
@@ -37,12 +42,13 @@ def lambda_handler(event, context):
                     {
                         "username": row["userPrincipalName"],
                         "ip_address": row["ipAddress"],
-                        "location": row["location"],
+                        "location": f'{row["location.city"]}, {row["location.state"]}, {row["location.countryOrRegion"]}',
+                        "geohash": encode(row["location.geoCoordinates.latitude"], row["location.geoCoordinates.longitude"]),
                     },
                     "success",
-                    row["status"] == "Success",
+                    int(row["status.errorCode"]) == 0,
                     "BOOLEAN",
-                    int((round(datetime.strptime(row["Date"], "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000))),
+                    int((round(datetime.strptime(row["createdDateTime"], "%Y-%m-%dT%H:%M:%SZ").timestamp() * 1000))),
                 )
             )
 
