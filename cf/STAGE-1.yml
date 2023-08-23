@@ -37,11 +37,10 @@ Parameters:
     Type: String
     Default: login
 
-
   GitRepository:
     Description: Git Repository.
     Type: String
-    Default: robinje/ad-processor
+    Default: https://github.com/robinje/ad-processor
 
   GitHubBranch:
     Description: Repo Branch.
@@ -66,7 +65,7 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateCodeBuild}
       Parameters:
-        RolesS3BucketPrivate: !Ref S3BucketPrivate
+        S3BucketPrivate: !Ref S3BucketPrivate
         GitRepository: !Ref GitRepository
         GitHubBranch: !Ref GitHubBranch
 

@@ -6,7 +6,7 @@ Parameters:
   GitRepository:
     Description: Git Repository.
     Type: String
-    Default: robinje/ad-processor
+    Default: https://github.com/robinje/ad-processor
 
   GitHubBranch:
     Description: Repo Branch.
@@ -59,7 +59,7 @@ Resources:
         Image: aws/codebuild/standard:6.0
         Type: LINUX_CONTAINER
       Description: Packages the Lambda Layer
-      ServiceRole: !Ref CodeBuildRoleARN
+      ServiceRole: !Sub arn:aws:iam::${AWS::AccountId}:role/service-role/CodeBuildRole
       Source:
         Auth:
           Type: OAUTH
