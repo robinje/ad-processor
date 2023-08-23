@@ -29,7 +29,7 @@ Parameters:
 
   Subnets:
     Description: Subnets for the Lambda
-    Type: List<AWS::EC2::Subnet::Id>
+    Type: AWS::EC2::Subnet::Id
 
   LambdaSecurityGroup:
     Description: Security Group for the Lambda
@@ -67,7 +67,8 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroup
-        SubnetIds: !Ref Subnets
+        SubnetIds: 
+          - !Ref Subnets
 
   AdProcessorLambda:
     Type: AWS::Lambda::Function
@@ -95,4 +96,5 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroup
-        SubnetIds: !Ref Subnets
+        SubnetIds: 
+          - !Ref Subnets

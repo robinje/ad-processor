@@ -19,7 +19,7 @@ Parameters:
 
   Subnets:
     Description: Subnets for the Lambda
-    Type: List<AWS::EC2::Subnet::Id>
+    Type: AWS::EC2::Subnet::Id
 
   LambdaSecurityGroup:
     Description: Security Group for the Lambda
@@ -44,8 +44,10 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateLambda}
       Parameters:
-        S3BucketPrivate: !Ref S3BucketPrivate
         Layer: !GetAtt ChildStackLayer.Outputs.LayerArn
-        SNSTopic: !Ref SNSTopic
+        S3BucketPrivate: !Ref S3BucketPrivate
         Subnets: !Ref Subnets
         LambdaSecurityGroup: !Ref LambdaSecurityGroup
+        SNSTopic: !Ref SNSTopic
+        
+        

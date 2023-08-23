@@ -56,8 +56,6 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateRoles}
-      Parameters:
-        RolesS3BucketPrivate: !Ref S3BucketPrivate
 
   ChildStackCodeBuild:
     Type: AWS::CloudFormation::Stack

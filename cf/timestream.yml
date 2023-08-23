@@ -29,10 +29,10 @@ Resources:
         MemoryStoreRetentionPeriodInHours: 24
         MagneticStoreRetentionPeriodInDays: 762
 
-  ObservatoryTimestreamWritePolicy:
+  TimestreamWritePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: ObservatoryTimestreamWritePolicy
+      ManagedPolicyName: TimestreamWritePolicy
       PolicyDocument:
         Version: 2012-10-17
         Statement:
