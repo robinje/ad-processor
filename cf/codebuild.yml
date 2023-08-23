@@ -6,7 +6,7 @@ Parameters:
   GitRepository:
     Description: Git Repository.
     Type: String
-    Default: ad-processor
+    Default: robinje/ad-processor
 
   GitHubBranch:
     Description: Repo Branch.

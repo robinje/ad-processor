@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Template for Deploying the Second Stage.
+
+Parameters:
+  S3BucketPrivate:
+    Description: Location for Private Artifacts
+    Type: String

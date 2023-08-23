@@ -18,7 +18,7 @@ CLIENT_SECRET = "your_client_secret"
 
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN", "your access toknen")
 
-RESOURCE = "https://graph.microsoft.com"
+RESOURCE = "graph.microsoft.com"
 
 API_VERSION = "v1.0"
 
