@@ -61,8 +61,8 @@ Resources:
             Action:
               - 'ssm:GetParameters'
             Resource:
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/CLIENT_ID
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/TENANT_ID
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/CLIENT_SECRET
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TENANT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_SECRET
       Roles:
         - LambdaRole
