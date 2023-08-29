@@ -6,6 +6,7 @@ Parameters:
   S3BucketPrivate:
     Description: Location for Private Artifacts
     Type: String
+    Default: dev-private
 
   TemplateLayer:
     Description: Path to Layer Template
@@ -17,13 +18,18 @@ Parameters:
     Type: String
     Default: lambda.yml
 
+  TemplateEventBridge:
+    Description: Path to EventBridge Template
+    Type: String
+    Default: eventbridge.yml
+
   Subnets:
     Description: Subnets for the Lambda
-    Type: List<AWS::EC2::Subnet::Id>
+    Type: AWS::EC2::Subnet::Id
 
-  LambdaSecurityGroup:
-    Description: Security Group for the Lambda
-    Type: AWS::EC2::SecurityGroup::Id
+  VPC:
+    Description: VPC for the Lambda
+    Type: AWS::EC2::VPC::Id
 
   SNSTopic:
     Description: SNS Topic for the Lambda
@@ -44,8 +50,19 @@ Resources:
     Properties:
       TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateLambda}
       Parameters:
-        S3BucketPrivate: !Ref S3BucketPrivate
         Layer: !GetAtt ChildStackLayer.Outputs.LayerArn
-        SNSTopic: !Ref SNSTopic
+        S3BucketPrivate: !Ref S3BucketPrivate
         Subnets: !Ref Subnets
-        LambdaSecurityGroup: !Ref LambdaSecurityGroup
+        VPC: !Ref VPC
+        SNSTopic: !Ref SNSTopic
+
+  ChildStackEventBridge:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/eventbridge.yml
+      Parameters:
+        AdCollectorLambdaArn: !GetAtt ChildStackLambda.Outputs.CollectorLambdaArn
+        AdProcessorLambdaArn: !GetAtt ChildStackLambda.Outputs.ProcessorLambdaArn
+        
+        
+        

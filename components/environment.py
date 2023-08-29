@@ -1,5 +1,9 @@
 import os
 
+import boto3
+
+ssm_client = boto3.client('ssm')
+
 REGION = os.environ.get("AWS_REGION", "us-east-1")
 
 LOG_LEVEL = int(os.environ.get("LOGGING", 20))
@@ -10,11 +14,11 @@ TABLE_NAME = os.environ.get("DATABASE_NAME", "login")
 
 TS_PAGE_SIZE = 100
 
-CLIENT_ID = "your_client_id"
+CLIENT_ID = ssm_client.get_parameter(Name='CLIENT_ID').get('Parameter', {}).get('Value', {})
 
-TENANT_ID = "your_tenant_id"
+TENANT_ID = ssm_client.get_parameter(Name='TENANT_ID').get('Parameter', {}).get('Value', {})
 
-CLIENT_SECRET = "your_client_secret"
+CLIENT_SECRET = ssm_client.get_parameter(Name='CLIENT_SECRET').get('Parameter', {}).get('Value', {})
 
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN", "your access toknen")
 

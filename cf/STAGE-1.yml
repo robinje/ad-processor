@@ -7,15 +7,20 @@ Parameters:
     Description: Location for Private Artifacts
     Type: String
 
+  TemplateCodeBuild:
+    Description: Path to CodeBuild Template
+    Type: String
+    Default: codebuild.yml
+
   TemplateRoles:
     Description: Path to Roles Template
     Type: String
     Default: roles.yml
 
-  TemplateCodeBuild:
-    Description: Path to CodeBuild Template
+  TemplateParameters:
+    Description: Path to Parameters Template
     Type: String
-    Default: codebuild.yml
+    Default: parameters.yml
 
   TemplateSNS:
     Description: Path to SNS Template
@@ -51,13 +56,36 @@ Parameters:
     Description: User Email for SNS Topic.
     Type: String
 
+  ClientId:
+    Type: String
+    Description: 'Client ID'
+    NoEcho: true
+
+  TenantId:
+    Type: String
+    Description: Tenant ID
+    NoEcho: true
+
+  ClientSecret:
+    Type: String
+    Description: Client Secret
+    NoEcho: true
+
 Resources:
   ChildStackRoles:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateRoles}
+
+  ChildStackParameters:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ChildStackRoles
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateParameters}
       Parameters:
-        RolesS3BucketPrivate: !Ref S3BucketPrivate
+        ClientId: !Ref ClientId
+        TenantId: !Ref TenantId
+        ClientSecret: !Ref ClientSecret
 
   ChildStackCodeBuild:
     Type: AWS::CloudFormation::Stack

@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Create AWS Systems Manager Parameter Store parameters and policy
+
+Parameters:
+
+  # Parameters
+  ClientId:
+    Type: String
+    Description: 'Client ID'
+    NoEcho: true
+
+  TenantId:
+    Type: String
+    Description: Tenant ID
+    NoEcho: true
+
+  ClientSecret:
+    Type: String
+    Description: Client Secret
+    NoEcho: true
+
+Resources:
+
+  # Create Systems Manager Parameter Store parameters
+  ClientIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: CLIENT_ID
+      Type: String
+      Value: !Ref ClientId
+      Description: Client ID parameter
+
+
+  TenantIdParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: TENANT_ID
+      Type: String
+      Value: !Ref TenantId
+      Description: Tenant ID parameter
+
+
+  ClientSecretParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: CLIENT_SECRET
+      Type: SecureString
+      Value: !Ref ClientSecret
+      Description: Client Secret parameter
+
+  # Create IAM policy for accessing parameters
+  ParameterAccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: YourPolicyName  # Replace with your policy name
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'ssm:GetParameters'
+            Resource:
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/CLIENT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/TENANT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/my-app/CLIENT_SECRET
+      Roles:
+        - LambdaRole

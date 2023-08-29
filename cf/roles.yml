@@ -2,11 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: Needed Roles
 
-Parameters:
-  RolesS3BucketPrivate:
-    Description: Location for Private Artifacts
-    Type: String
-
 Resources:
 
 # Roles
@@ -67,6 +62,27 @@ Resources:
              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientID
              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientSecret
              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TenantID
+      Roles:
+        - !Ref LambdaRole
+
+  LambdaNetworkPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: LambdaNetworkPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - cloudwatch:GetMetricStatistics
+              - ec2:CreateNetworkInterface
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeNetworkInterfaceAttribute
+              - ec2:DescribeNetworkInterfacePermissions
+              - ec2:DeleteNetworkInterface
+              - ec2:DescribeInstances
+            Resource:
+              - "*"
       Roles:
         - !Ref LambdaRole
 

@@ -29,11 +29,11 @@ Parameters:
 
   Subnets:
     Description: Subnets for the Lambda
-    Type: List<AWS::EC2::Subnet::Id>
+    Type: AWS::EC2::Subnet::Id
 
-  LambdaSecurityGroup:
-    Description: Security Group for the Lambda
-    Type: AWS::EC2::SecurityGroup::Id
+  VPC:
+    Description: VPC for the Lambda
+    Type: AWS::EC2::VPC::Id
 
   SNSTopic:
     Description: SNS Topic for the Lambda
@@ -41,6 +41,18 @@ Parameters:
     Default: ad-processor
 
 Resources:
+
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VPC
+      GroupDescription: Lambda Security Group
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
   AdCollectorLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -67,7 +79,8 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroup
-        SubnetIds: !Ref Subnets
+        SubnetIds: 
+          - !Ref Subnets
 
   AdProcessorLambda:
     Type: AWS::Lambda::Function
@@ -95,4 +108,14 @@ Resources:
       VpcConfig:
         SecurityGroupIds:
           - !Ref LambdaSecurityGroup
-        SubnetIds: !Ref Subnets
+        SubnetIds: 
+          - !Ref Subnets
+
+Outputs:
+  AdCollectorLambdaARN:
+    Description: ARN of the Ad Collector Lambda function
+    Value: !GetAtt AdCollectorLambda.Arn
+
+  AdProcessorLambdaARN:
+    Description: ARN of the Ad Processor Lambda function
+    Value: !GetAtt AdProcessorLambda.Arn
