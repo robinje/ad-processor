@@ -6,6 +6,7 @@ Parameters:
   S3BucketPrivate:
     Description: Location for Private Artifacts
     Type: String
+    Default: dev-private
 
   TemplateLayer:
     Description: Path to Layer Template
@@ -21,9 +22,9 @@ Parameters:
     Description: Subnets for the Lambda
     Type: AWS::EC2::Subnet::Id
 
-  LambdaSecurityGroup:
-    Description: Security Group for the Lambda
-    Type: AWS::EC2::SecurityGroup::Id
+  VPC:
+    Description: VPC for the Lambda
+    Type: AWS::EC2::VPC::Id
 
   SNSTopic:
     Description: SNS Topic for the Lambda
@@ -47,7 +48,7 @@ Resources:
         Layer: !GetAtt ChildStackLayer.Outputs.LayerArn
         S3BucketPrivate: !Ref S3BucketPrivate
         Subnets: !Ref Subnets
-        LambdaSecurityGroup: !Ref LambdaSecurityGroup
+        VPC: !Ref VPC
         SNSTopic: !Ref SNSTopic
         
         
