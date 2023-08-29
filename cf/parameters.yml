@@ -53,7 +53,7 @@ Resources:
   ParameterAccessPolicy:
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: YourPolicyName  # Replace with your policy name
+      PolicyName: ad-paramater-policy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
