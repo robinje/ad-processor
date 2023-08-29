@@ -20,14 +20,14 @@ class TimeStreamWriter:
 
             self.status = {"statusCode": 503, "body": {"message": "[Service Unavailable] Timestream database is unreachable"}}
 
-    @xray_recorder.capture("Timestream")  # type: ignore
     def write_records(self, write_args: dict, table):
         try:
-            self.writer.write_records(
+            response = self.writer.write_records(
                 DatabaseName=DATABASE_NAME,
-                TableName=table.value.lower(),
+                TableName=table.lower(),
                 **write_args,
             )
+            logger.info(f"Timestream Handler: Write Records: {response}")
         except self.writer.exceptions.RejectedRecordsException as err:
             logger.warning(f"Timestream Handler: RejectedRecords: {err}")
             for rr in err.response["RejectedRecords"]:
@@ -138,7 +138,7 @@ def timeseries_add_item(table, records: list):
 
     try:
         logger.info(f"DB Interface: Timeseries Writer: {records}")
-        Time_Series_Writer.writer.write_records(DatabaseName=DATABASE_NAME, TableName=table.value.lower(), Records=records)
+        Time_Series_Writer.writer.write_records(DatabaseName=DATABASE_NAME, TableName=table.lower(), Records=records)
     except Time_Series_Writer.writer.exceptions.RejectedRecordsException as err:
         logger.warning(f"DB Interface: Timeseries RejectedRecords: Table: {table} Error: {err}")
         for rr in err.response["RejectedRecords"]:
@@ -148,7 +148,7 @@ def timeseries_add_item(table, records: list):
         logger.exception(f"DB Interface: Timeseries {err}", stack_info=True)
 
 
-def timeseries_add_batch(table, records: list, common_attributes=None) -> None:
+def timeseries_add_batch(table: str, records: list, common_attributes=None) -> None:
     """
     Writes a batch of records to a timeseries database table.
 

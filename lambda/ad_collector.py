@@ -6,6 +6,7 @@ from components.azure import azure_token
 from components.environment import DATABASE_NAME, TABLE_NAME, RESOURCE, API_VERSION
 from components.geohash import encode
 from components.timestream import timestream_record, timeseries_add_batch
+from components.logging import logger
 
 def lambda_handler(_, context):
     # Time filter for last 30 minutes
@@ -16,6 +17,8 @@ def lambda_handler(_, context):
     # Get Token
     token = azure_token()
 
+    logger.info(f"Get Token: Time Remaining: {context.get_remaining_time_in_millis()}")
+
     # Fetch Azure AD Sign-in Logs
     headers = {
         "Authorization": token,
@@ -23,6 +26,8 @@ def lambda_handler(_, context):
     }
 
     response = requests.get(sign_in_log_url, headers=headers)
+
+    logger.info(f"Request: Time Remaining: {context.get_remaining_time_in_millis()}")
 
     if response.status_code == 200:
         logs = response.json().get("value", [])
@@ -56,8 +61,11 @@ def lambda_handler(_, context):
         timeseries_add_batch(TABLE_NAME, records)
 
         # Publish the success message
+        logger.info(f"Complete: Time Remaining: {context.get_remaining_time_in_millis()}")
         message = f"Sign-in logs have been written to Timestream: {DATABASE_NAME}/{TABLE_NAME}"
         return {"statusCode": 200, "body": message}
     else:
+        logger.info(f"Fail: Time Remaining: {context.get_remaining_time_in_millis()}")
+        logger.error(f"Error fetching logs: {response.status_code}, {response.text}")
         error_message = f"Error fetching logs: {response.status_code}, {response.text}"
         return {"statusCode": 500, "body": error_message}

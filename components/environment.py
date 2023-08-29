@@ -10,7 +10,7 @@ LOG_LEVEL = int(os.environ.get("LOGGING", 20))
 
 DATABASE_NAME = os.environ.get("DATABASE_NAME", "ad-processor")
 
-TABLE_NAME = os.environ.get("DATABASE_NAME", "login")
+TABLE_NAME = os.environ.get("TABLE_NAME", "login")
 
 TS_PAGE_SIZE = 100
 
