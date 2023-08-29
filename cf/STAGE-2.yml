@@ -58,10 +58,10 @@ Resources:
   ChildStackEventBridge:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/eventbridge.yml
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/${TemplateEventBridge}
       Parameters:
-        AdCollectorLambdaArn: !GetAtt ChildStackLambda.Outputs.CollectorLambdaArn
-        AdProcessorLambdaArn: !GetAtt ChildStackLambda.Outputs.ProcessorLambdaArn
+        AdCollectorLambdaArn: !GetAtt ChildStackLambda.Outputs.AdCollectorLambdaARN
+        AdProcessorLambdaArn: !GetAtt ChildStackLambda.Outputs.AdProcessorLambdaARN
         
         
         

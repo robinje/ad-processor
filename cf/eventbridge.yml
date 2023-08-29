@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Create EventBridge Rules for Lambda Execution
 
-Paramaters:
+Parameters:
   AdCollectorLambdaArn:
     Description: ARN of the collector Lambda
     Type: String
@@ -9,8 +9,6 @@ Paramaters:
   AdProcessorLambdaArn:
     Description: ARN of the processor Lambda
     Type: String
-
-
 
 Resources:
   CollectorRule:
