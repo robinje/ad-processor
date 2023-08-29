@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create EventBridge Rules for Lambda Execution
+
+Paramaters:
+  AdCollectorLambdaArn:
+    Description: ARN of the collector Lambda
+    Type: String
+    
+  AdProcessorLambdaArn:
+    Description: ARN of the processor Lambda
+    Type: String
+
+
+
+Resources:
+  CollectorRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Event rule to trigger the collector Lambda every 10 minutes
+      ScheduleExpression: rate(10 minutes)
+      State: ENABLED
+      Targets:
+        - Arn: !Ref AdCollectorLambdaArn
+          Id: CollectorTarget
+
+  ProcessorRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Event rule to trigger the processor Lambda every hour
+      ScheduleExpression: rate(1 hour)
+      State: ENABLED
+      Targets:
+        - Arn: !Ref AdProcessorLambdaArn
+          Id: ProcessorTarget
+
+Outputs:
+  CollectorRuleArn:
+    Description: ARN of the EventBridge rule for the collector Lambda
+    Value: !GetAtt CollectorRule.Arn
+
+  ProcessorRuleArn:
+    Description: ARN of the EventBridge rule for the processor Lambda
+    Value: !GetAtt ProcessorRule.Arn

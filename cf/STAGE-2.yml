@@ -18,6 +18,11 @@ Parameters:
     Type: String
     Default: lambda.yml
 
+  TemplateEventBridge:
+    Description: Path to EventBridge Template
+    Type: String
+    Default: eventbridge.yml
+
   Subnets:
     Description: Subnets for the Lambda
     Type: AWS::EC2::Subnet::Id
@@ -50,5 +55,14 @@ Resources:
         Subnets: !Ref Subnets
         VPC: !Ref VPC
         SNSTopic: !Ref SNSTopic
+
+  ChildStackEventBridge:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketPrivate}.s3.amazonaws.com/cf/eventbridge.yml
+      Parameters:
+        AdCollectorLambdaArn: !GetAtt ChildStackLambda.Outputs.CollectorLambdaArn
+        AdProcessorLambdaArn: !GetAtt ChildStackLambda.Outputs.ProcessorLambdaArn
+        
         
         

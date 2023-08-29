@@ -110,3 +110,12 @@ Resources:
           - !Ref LambdaSecurityGroup
         SubnetIds: 
           - !Ref Subnets
+
+Outputs:
+  AdCollectorLambdaARN:
+    Description: ARN of the Ad Collector Lambda function
+    Value: !GetAtt AdCollectorLambda.Arn
+
+  AdProcessorLambdaARN:
+    Description: ARN of the Ad Processor Lambda function
+    Value: !GetAtt AdProcessorLambda.Arn

@@ -11,8 +11,8 @@ Update environment.py with Azure values in the AD Collector Lambda
 ## TODO
 
 - [X] Paramaterize the Azure Values
-- [ ] Add a Networking Template with a Security Group
-- [ ] Add Event Bridge Rule to trigger the Lambdas
+- [X] Add a Networking Template with a Security Group
+- [X] Add Event Bridge Rule to trigger the Lambdas
 
 
 Deployment Steps:
