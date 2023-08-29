@@ -10,7 +10,7 @@ def collect_data() -> list:
     timestream_query = f"""
         WITH user_most_common_location AS (
             SELECT username, location, RANK() OVER (PARTITION BY username ORDER BY COUNT(*) DESC) as rank
-            FROM {DATABASE_NAME}.{TABLE_NAME}
+            FROM "{DATABASE_NAME}"."{TABLE_NAME}"
             WHERE time BETWEEN ago(1h) AND now()
             GROUP BY username, location
         ),
@@ -21,8 +21,8 @@ def collect_data() -> list:
         )
 
         -- Query for non-common locations
-        SELECT t.username, t.ip_address, t.location, t.success, t.time
-        FROM {DATABASE_NAME}.{TABLE_NAME} AS t
+        SELECT t.username, t.ip_address, t.location, t.measure_name, t.time
+        FROM "{DATABASE_NAME}"."{TABLE_NAME}" AS t
         JOIN non_common_locations AS n
         ON t.username = n.username AND t.location = n.location
         WHERE t.time BETWEEN ago(1h) AND now()
@@ -30,10 +30,10 @@ def collect_data() -> list:
         UNION
 
         -- Query for records where success is not true
-        SELECT username, ip_address, location, success, time
-        FROM {DATABASE_NAME}.{TABLE_NAME}
-        WHERE success != true
-        AND time BETWEEN ago(1h) AND now();
+        SELECT username, ip_address, location, measure_name, time
+        FROM "{DATABASE_NAME}"."{TABLE_NAME}"
+        WHERE measure_value::boolean
+        AND time BETWEEN ago(1h) AND now()
     """
 
     try:
