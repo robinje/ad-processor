@@ -45,7 +45,7 @@ Resources:
     Type: AWS::SSM::Parameter
     Properties:
       Name: CLIENT_SECRET
-      Type: SecureString
+      Type: String
       Value: !Ref ClientSecret
       Description: Client Secret parameter
 
