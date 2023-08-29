@@ -6,7 +6,6 @@ Parameters:
   S3BucketPrivate:
     Description: Location for Private Artifacts
     Type: String
-    Default: dev-private
 
   TemplateLayer:
     Description: Path to Layer Template
