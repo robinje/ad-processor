@@ -32,7 +32,7 @@ def collect_data() -> list:
         -- Query for records where success is not true
         SELECT username, ip_address, location, measure_name, time
         FROM "{DATABASE_NAME}"."{TABLE_NAME}"
-        WHERE measure_value::boolean
+        WHERE NOT measure_value::boolean
         AND time BETWEEN ago(1h) AND now()
     """
 

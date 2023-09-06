@@ -31,6 +31,22 @@ Resources:
         - Arn: !Ref AdProcessorLambdaArn
           Id: ProcessorTarget
 
+  PermissionForAdCollector:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AdCollectorLambdaArn
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt CollectorRule.Arn
+
+  PermissionForAdProcessor:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref AdProcessorLambdaArn
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt ProcessorRule.Arn
+
 Outputs:
   CollectorRuleArn:
     Description: ARN of the EventBridge rule for the collector Lambda

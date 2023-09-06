@@ -62,6 +62,3 @@ Resources:
       Parameters:
         AdCollectorLambdaArn: !GetAtt ChildStackLambda.Outputs.AdCollectorLambdaARN
         AdProcessorLambdaArn: !GetAtt ChildStackLambda.Outputs.AdProcessorLambdaARN
-        
-        
-        
