@@ -62,6 +62,10 @@ Resources:
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_ID
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TENANT_ID
               - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_SECRET
+          - Action:
+            - iam:PassRole
+            Effect: Allow
+            Resource: "*"
       Roles:
         - !Ref LambdaRole
 
