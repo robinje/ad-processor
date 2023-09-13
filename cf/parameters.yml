@@ -48,21 +48,3 @@ Resources:
       Type: String
       Value: !Ref ClientSecret
       Description: Client Secret parameter
-
-  # Create IAM policy for accessing parameters
-  ParameterAccessPolicy:
-    Type: 'AWS::IAM::Policy'
-    Properties:
-      PolicyName: ad-paramater-policy
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action:
-              - 'ssm:GetParameters'
-            Resource:
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_ID
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TENANT_ID
-              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_SECRET
-      Roles:
-        - LambdaRole

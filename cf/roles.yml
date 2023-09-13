@@ -56,12 +56,12 @@ Resources:
             Effect: Allow
             Resource: "*"
           - Action:
-            - ssm:GetParameters
+            - ssm:GetParameter
             Effect: Allow
             Resource:
-             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientID
-             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/ClientSecret
-             - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TenantID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/TENANT_ID
+              - !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CLIENT_SECRET
       Roles:
         - !Ref LambdaRole
 
